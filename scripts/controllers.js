@@ -10,7 +10,7 @@ var appControllers = angular.module('appControllers', ['iroad-relation-modal'])
         $scope.loading = true;
         $scope.tableParams = new NgTableParams();
         $scope.params ={pageSize:5};
-        $scope.programName = "Offence Event";
+        $scope.programName = "Driver";
         function createColumns(programStageDataElements) {
             var cols = []
             if (programStageDataElements){
@@ -37,12 +37,16 @@ var appControllers = angular.module('appControllers', ['iroad-relation-modal'])
         $scope.getOffences = function(){
             iRoadModal.getProgramByName($scope.programName).then(function(program){
                 $scope.program = program;
-                $scope.tableCols = createColumns(program.programStages[0].programStageDataElements);
-                iRoadModal.getAll($scope.programName,$scope.params).then(function(results){
-                    $scope.tableParams.settings({
-                        dataset: results
-                    });
-                    $scope.loading = false;
+                iRoadModal.getRelatedPrograms($scope.programName).then(function(programs){
+                    console.log(programs);
+                    $scope.programs = programs;
+                    $scope.tableCols = createColumns(program.programStages[0].programStageDataElements);
+                    iRoadModal.getAll($scope.programName,$scope.params).then(function(results){
+                        $scope.tableParams.settings({
+                            dataset: results
+                        });
+                        $scope.loading = false;
+                    })
                 })
             })
         }
