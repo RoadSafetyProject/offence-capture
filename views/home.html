@@ -25,7 +25,7 @@
                             <li><a ng-click="showDetails(event)">View Details</a></li>
                             <li><a ng-click="showEdit(event)">Edit</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="#">Separated link</a></li>
+                            <li ng-repeat="program in programs"><a href="#">{{program.displayName}}</a></li>
                         </ul>
                     </div>
                 </td>
