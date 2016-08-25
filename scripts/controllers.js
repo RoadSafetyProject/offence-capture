@@ -13,7 +13,7 @@ var appControllers = angular.module('appControllers', ['iroad-relation-modal'])
         $scope.loading = true;
         $scope.tableParams = new NgTableParams();
         $scope.params ={pageSize:5};
-        $scope.programName = "Driver";
+        $scope.programName = "Offence Event";
         function createColumns(programStageDataElements) {
             var cols = []
             if (programStageDataElements){
