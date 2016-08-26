@@ -7,9 +7,6 @@ var appControllers = angular.module('appControllers', ['iroad-relation-modal'])
 
     .controller('MainController', function (NgTableParams,iRoadModal, $scope,$uibModal,$log) {
         //$scope.offenceEvent = iRoadModal("Offence Event");
-        /*iRoadModal.find($scope.programName).then(function(events){
-            console.log("events:",events);
-        })*/
         $scope.loading = true;
         $scope.tableParams = new NgTableParams();
         $scope.params ={pageSize:5};
@@ -41,7 +38,6 @@ var appControllers = angular.module('appControllers', ['iroad-relation-modal'])
             iRoadModal.getProgramByName($scope.programName).then(function(program){
                 $scope.program = program;
                 iRoadModal.getRelatedPrograms($scope.programName).then(function(programs){
-                    console.log(programs);
                     $scope.programs = programs;
                     $scope.tableCols = createColumns(program.programStages[0].programStageDataElements);
                     iRoadModal.getAll($scope.programName,$scope.params).then(function(results){
