@@ -1,7 +1,7 @@
 {
     "version": "0.1",
-    "name": "Offence Capture",
-    "description": "Offence Capture App",
+    "name": "Offense Capture",
+    "description": "Offense Capture",
     "launch_path": "index.html",
     "icons": {
         "16": "icon.png",
