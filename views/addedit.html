@@ -20,6 +20,11 @@
                 <location-selector ng-location-model="event.coordinate"></location-selector>
                 </td>
             </tr>
+            <tr>
+                <td colspan="2">
+                    <available-select availbale-items="availableOffences" ng-model="offenceRegistriesSelected"></available-select>
+                </td>
+            </tr>
         </table>
     <div ng-if="loading" class="loader"></div>
 </div>

@@ -1,0 +1,25 @@
+<table>
+    <tr>
+        <th>Available</th>
+        <th></th>
+        <th>Selected</th>
+    </tr>
+    <tr>
+        <th><input/></th>
+        <th></th>
+        <th>Selected</th>
+    </tr>
+    <tr>
+        <td>
+            <select multiple class="form-control">
+                <option ng-repeat="item in availableItems">{{item}}</option>
+            </select>
+        </td>
+        <td></td>
+        <td>
+            <select multiple class="form-control">
+                <option ng-repeat="item in ngModel">{{item}}</option>
+            </select>
+        </td>
+    </tr>
+</table>

@@ -71,8 +71,6 @@ var appDirectives = angular.module('appDirectives', [])
             },
             template: '<div class="input-group"><input ng-model="address" type="text" class="form-control" aria-label="..."><div class="input-group-btn"><button type="button" class="btn btn-default dropdown-toggle" ng-click="chooseLocation()" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Choose Location</button></div><!-- /btn-group --> </div>',
             controller: function ($scope, $uibModal, MapService) {
-                console.log($scope);
-                console.log($scope['ngLocationModel']);
                 $scope.$watch('ngLocationModel',function(){
                     if($scope.ngLocationModel){
                         MapService.getReverseCoding($scope.ngLocationModel.latitude, $scope.ngLocationModel.longitude).then(function (results) {
@@ -340,5 +338,18 @@ var appDirectives = angular.module('appDirectives', [])
                     $scope.getFile();
                 });
             }
+        }
+    })
+    .directive("availableSelect",function() {
+        return {
+            scope:{
+                ngModel:"=",
+                availableItems:"="
+            },
+            controller: function ($scope) {
+                console.log($scope.availableItems);
+                console.log($scope.ngModel);
+            },
+            templateUrl:"views/directives/availableSelect.html"
         }
     })
