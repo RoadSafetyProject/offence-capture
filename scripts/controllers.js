@@ -83,7 +83,7 @@ var appControllers = angular.module('appControllers', ['iroad-relation-modal'])
                 animation: $scope.animationsEnabled,
                 templateUrl: 'views/addedit.html',
                 controller: 'EditController',
-                size: "lg",
+                size: "sm",
                 resolve: {
                     event: function () {
                         return event;
@@ -117,7 +117,7 @@ var appControllers = angular.module('appControllers', ['iroad-relation-modal'])
                 animation: $scope.animationsEnabled,
                 templateUrl: 'views/addedit.html',
                 controller: 'EditController',
-                size: "lg",
+                size: "sm",
                 resolve: {
                     event: function () {
                         return event;
