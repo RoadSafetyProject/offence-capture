@@ -48,9 +48,12 @@ var appControllers = angular.module('appControllers', ['iroad-relation-modal'])
                     })
                 })
             })
-        }
+        };
 
-        $scope.getOffences();
+        dhis2.loadData = function(){
+            $scope.getOffences();
+        };
+
         $scope.showDetails = function(event){
             var modalInstance = $uibModal.open({
                 animation: $scope.animationsEnabled,
