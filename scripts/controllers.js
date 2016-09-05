@@ -78,6 +78,33 @@ var appControllers = angular.module('appControllers', ['iroad-relation-modal'])
                 $log.info('Modal dismissed at: ' + new Date());
             });
         }
+        $scope.showDriver = function(event){
+            var modalInstance = $uibModal.open({
+                animation: $scope.animationsEnabled,
+                templateUrl: 'views/details.html',
+                controller: 'DetailController',
+                size: "sm",
+                resolve: {
+                    event: function () {
+                        return event;
+                    },
+                    program:function(){
+                        return $scope.program;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (resultItem) {
+                iRoadModal.setRelations(event).then(function(){
+
+                });
+            }, function () {
+                iRoadModal.setRelations(event).then(function(){
+
+                });
+                $log.info('Modal dismissed at: ' + new Date());
+            });
+        }
         $scope.showEdit = function(event){
             var modalInstance = $uibModal.open({
                 animation: $scope.animationsEnabled,
