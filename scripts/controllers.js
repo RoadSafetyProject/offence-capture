@@ -186,7 +186,7 @@ var appControllers = angular.module('appControllers', ['iroad-relation-modal'])
             $uibModalInstance.dismiss('cancel');
         };
     })
-    .controller('EditController', function (NgTableParams,iRoadModal, $scope,$uibModalInstance,program,event,$uibModal) {
+    .controller('EditController', function (NgTableParams,iRoadModal, $scope,$uibModalInstance,program,event,$q) {
         $scope.loading = true;
         $scope.program = program;
         iRoadModal.initiateEvent(event,program).then(function(newEvent){
@@ -202,27 +202,85 @@ var appControllers = angular.module('appControllers', ['iroad-relation-modal'])
                 return index;
             }
             iRoadModal.getAll("Offence Registry").then(function(results){
-                $scope.offenceRegistriesSelected = [];
                 $scope.availableOffences = results;
-                $scope.loading = false;
+                if($scope.event.event){
+                    iRoadModal.getProgramByName("Offence").then(function(offenceProgram){
+                        offenceProgram.programStages[0].programStageDataElements.forEach(function(programStageDataElement){
+                            //var dataValue = {"dataElement":programStageDataElement.dataElement.id};
+                            if(programStageDataElement.dataElement.name == "Program_Offence_Event"){
+                                iRoadModal.find(offenceProgram.id,programStageDataElement.dataElement.id,$scope.event.event).then(function(events){
+                                    $scope.offenceRegistriesSelected = [];//events;
+                                    events.forEach(function(event){
+                                        event.dataValues.forEach(function(dataValue){
+                                            offenceProgram.programStages[0].programStageDataElements.forEach(function(programStageDataElement) {
+                                                //var dataValue = {"dataElement":programStageDataElement.dataElement.id};
+                                                if (programStageDataElement.dataElement.name == "Program_Offence_Registry" && dataValue.dataElement == programStageDataElement.dataElement.id) {
+                                                    //alert("hererwer");
+                                                    $scope.availableOffences.forEach(function(offEvent){
+                                                        if(offEvent.event == dataValue.value){
+                                                            $scope.offenceRegistriesSelected.push(offEvent);
+                                                        }
+                                                    })
+                                                }
+                                            });
+                                        })
+                                    })
+                                    $scope.loading = false;
+                                })
+                            }
+                        })
+                    });
+                }else{
+                    $scope.offenceRegistriesSelected = [];
+                    $scope.loading = false;
+                }
             },function(){
                 alert("Here")
             })
-        })
-        $scope.getOffenceRegistry = function(){
-
-        }
+        });
         $scope.save = function () {
             $scope.loading = true;
             console.log($scope.event);
             iRoadModal.save($scope.event,$scope.program).then(function(result){
-                $scope.loading = false;
-                $uibModalInstance.close(result);
+                var promises = [];
+                iRoadModal.getProgramByName("Offence").then(function(offenceProgram){
+                    $scope.offenceRegistriesSelected.forEach(function(offenceRegistry){
+                        var dataValues = [];
+                        offenceProgram.programStages[0].programStageDataElements.forEach(function(programStageDataElement){
+                            var dataValue = {"dataElement":programStageDataElement.dataElement.id};
+                            if(programStageDataElement.dataElement.name == "Program_Offence_Event"){
+                                dataValue.value = result;
+                            }else if(programStageDataElement.dataElement.name == "Program_Offence_Registry"){
+                                dataValue.value = offenceRegistry;
+                            }
+                            dataValues.push(dataValue);
+                        })
+                        promises.push($scope.saveOffence(dataValues,offenceRegistry,offenceProgram));
+                    })
+                })
+                $q.all(promises).then(function () {
+                    $scope.loading = false;
+                    $uibModalInstance.close(result);
+                }, function (error) {
+
+                });
+
             },function(error){
                 $scope.loading = false;
             });
         };
+        $scope.saveOffence = function(dataValues,offenceRegistry,offenceProgram){
+            var defer = $q.defer();
+            /*iRoadModal.initiateEvent({dataValues:dataValues},offenceProgram).then(function(newEvent){
 
+            });*/
+            iRoadModal.save({dataValues:dataValues},offenceProgram).then(function(result){
+                defer.resolve();
+            },function(error){
+                $scope.loading = false;
+            });
+            return defer.promise;
+        }
         $scope.cancel = function () {
             iRoadModal.setRelations($scope.event).then(function(){
                 $uibModalInstance.dismiss('cancel');
