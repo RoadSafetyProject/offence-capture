@@ -108,7 +108,7 @@ var appControllers = angular.module('appControllers', ['iroad-relation-modal'])
 
                         });
                     }, function () {
-                        
+
                         $log.info('Modal dismissed at: ' + new Date());
                     });
                 });
@@ -202,10 +202,11 @@ var appControllers = angular.module('appControllers', ['iroad-relation-modal'])
                 return index;
             }
             iRoadModal.getAll("Offence Registry").then(function(results){
-                console.log(results);
                 $scope.offenceRegistriesSelected = [];
                 $scope.availableOffences = results;
                 $scope.loading = false;
+            },function(){
+                alert("Here")
             })
         })
         $scope.getOffenceRegistry = function(){

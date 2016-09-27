@@ -339,11 +339,36 @@ var appDirectives = angular.module('appDirectives', [])
         return {
             scope:{
                 ngModel:"=",
-                availableItems:"="
+                availableItems:"=",
+                selectView:"@"
             },
-            controller: function ($scope) {
-                console.log($scope.availableItems);
-                console.log($scope.ngModel);
+            controller: function ($scope,$filter) {
+                $scope.searchText = "";
+                $scope.select = function(item){
+                    $scope.ngModel.push(item);
+                }
+                $scope.filterSelected = function(event){
+                    var show = true;
+                    $scope.ngModel.some(function(ngEvent){
+                        if(ngEvent.event == event.event){
+                            show = false;
+                            return true;
+                        }
+                    })
+                    return show;
+                }
+                $scope.removeSelection = function(item){
+                    $scope.ngModel.splice($scope.ngModel.indexOf(item), 1);
+                }
+                $scope.search = function(item){
+                    if($scope.searchText == ""){
+                        return true;
+                    }
+                    if($filter('extrapolateDataValue')(item, $scope.selectView).toLowerCase().indexOf($scope.searchText.toLowerCase()) > -1){
+                        return true;
+                    }
+                    return false;
+                }
             },
             templateUrl:"views/directives/availableSelect.html"
         }
