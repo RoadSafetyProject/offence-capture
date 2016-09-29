@@ -9,28 +9,6 @@ var appControllers = angular.module('appControllers', ['iroad-relation-modal'])
         //$scope.offenceEvent = iRoadModal("Offence Event");
         $scope.loading = true;
         $scope.pager ={pageSize:10};
-        $scope.tableParams = new NgTableParams({count:$scope.pager.pageSize}, {
-            getData: function(params) {
-                $scope.pager.page = params.page();
-                // ajax request to api
-                return iRoadModal.getProgramByName($scope.programName).then(function(program){
-                    $scope.program = program;
-                    return iRoadModal.getRelatedPrograms($scope.programName).then(function(programs){
-                        $scope.programs = programs;
-                        $scope.tableCols = createColumns(program.programStages[0].programStageDataElements);
-                        return iRoadModal.getAll($scope.programName,$scope.pager).then(function(results){
-                            $scope.pager = results.pager;
-                            params.page($scope.pager.page)
-                            params.total($scope.pager.total);
-                            $timeout(function(){
-                                $scope.loading = false;
-                            });
-                            return results.events;
-                        })
-                    })
-                })
-            }
-        });
         $scope.programName = "Offence Event";
         function createColumns(programStageDataElements) {
             var cols = []
@@ -57,7 +35,28 @@ var appControllers = angular.module('appControllers', ['iroad-relation-modal'])
         }
 
         dhis2.loadData = function(){
-            //$scope.getOffences();
+            $scope.tableParams = new NgTableParams({count:$scope.pager.pageSize}, {
+                getData: function(params) {
+                    $scope.pager.page = params.page();
+                    // ajax request to api
+                    return iRoadModal.getProgramByName($scope.programName).then(function(program){
+                        $scope.program = program;
+                        return iRoadModal.getRelatedPrograms($scope.programName).then(function(programs){
+                            $scope.programs = programs;
+                            $scope.tableCols = createColumns(program.programStages[0].programStageDataElements);
+                            return iRoadModal.getAll($scope.programName,$scope.pager).then(function(results){
+                                $scope.pager = results.pager;
+                                params.page($scope.pager.page)
+                                params.total($scope.pager.total);
+                                $timeout(function(){
+                                    $scope.loading = false;
+                                });
+                                return results.events;
+                            })
+                        })
+                    })
+                }
+            });
         };
 
         $scope.showDetails = function(event){
