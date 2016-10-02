@@ -115,6 +115,33 @@ var appControllers = angular.module('appControllers', ['iroad-relation-modal'])
                 });
                 $log.info('Modal dismissed at: ' + new Date());
             });
+        };
+        $scope.showOffenceDetails = function (event) {
+            var modalInstance = $uibModal.open({
+                animation: $scope.animationsEnabled,
+                templateUrl: 'views/offenceDetails.html',
+                controller: 'OffenceDetailController',
+                size: "sm",
+                resolve: {
+                    event: function () {
+                        return event.event;
+                    },
+                    program: function () {
+                        return $scope.program;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (resultItem) {
+                iRoadModal.setRelations(event).then(function () {
+
+                });
+            }, function () {
+                iRoadModal.setRelations(event).then(function () {
+
+                });
+                $log.info('Modal dismissed at: ' + new Date());
+            });
         }
         $scope.showDriver = function (event) {
             $scope.showRelationShip("Driver", event);
@@ -259,6 +286,96 @@ var appControllers = angular.module('appControllers', ['iroad-relation-modal'])
             $scope.loading = false;
         })
         $scope.program = program;
+        $scope.ok = function () {
+            $uibModalInstance.close({});
+        };
+
+        $scope.cancel = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
+    })
+    .controller('OffenceDetailController', function (iRoadModal, $scope, NgTableParams,$uibModalInstance, $uibModal, event) {
+        $scope.loading = true;
+        $scope.pager = {pageSize: 10};
+        $scope.programName = "Payment Reciept";
+        iRoadModal.getAll("Offence Registry").then(function (results) {
+            $scope.availableOffences = results;
+            iRoadModal.getProgramByName("Offence").then(function (offenceProgram) {
+                offenceProgram.programStages[0].programStageDataElements.forEach(function (programStageDataElement) {
+                    //var dataValue = {"dataElement":programStageDataElement.dataElement.id};
+                    if (programStageDataElement.dataElement.name == "Program_Offence_Event") {
+                        iRoadModal.find(offenceProgram.id, programStageDataElement.dataElement.id, event).then(function (events) {
+                            $scope.offenceRegistriesSelected = [];//events;
+                            events.forEach(function (event) {
+                                event.dataValues.forEach(function (dataValue) {
+                                    offenceProgram.programStages[0].programStageDataElements.forEach(function (programStageDataElement) {
+                                        //var dataValue = {"dataElement":programStageDataElement.dataElement.id};
+                                        if (programStageDataElement.dataElement.name == "Program_Offence_Registry" && dataValue.dataElement == programStageDataElement.dataElement.id) {
+                                            //alert("hererwer");
+                                            $scope.availableOffences.forEach(function (offEvent) {
+                                                if (offEvent.event == dataValue.value) {
+                                                    $scope.offenceRegistriesSelected.push(offEvent);
+                                                }
+                                            })
+                                        }
+                                    });
+                                })
+                            })
+                            $scope.tableParams = new NgTableParams({count: $scope.pager.pageSize}, {
+                                getData: function (params) {
+                                    return iRoadModal.getProgramByName("Offence Registry").then(function (offenceRProgram) {
+                                        $scope.tableCols = iRoadModal.createColumns(offenceRProgram.programStages[0].programStageDataElements,true);
+                                        $scope.total = 0;
+                                        offenceRProgram.programStages[0].programStageDataElements.forEach(function (programStageDataElement) {
+                                            //var dataValue = {"dataElement":programStageDataElement.dataElement.id};
+                                            if (programStageDataElement.dataElement.name == "Amount") {
+                                                $scope.offenceRegistriesSelected.forEach(function(offenceRegistrySelected){
+                                                    offenceRegistrySelected.dataValues.forEach(function(dataValue){
+                                                        if(dataValue.dataElement == programStageDataElement.dataElement.id){
+                                                            $scope.total += parseInt(dataValue.value);
+                                                        }
+                                                    })
+                                                })
+                                            }
+                                        })
+                                        return $scope.offenceRegistriesSelected;
+                                    })
+                                }
+                            });
+                            $scope.loading = false;
+                        })
+                    }
+                })
+            });
+        }, function () {
+        })
+        $scope.showPaymentStatus = function () {
+            var modalInstance = $uibModal.open({
+                animation: $scope.animationsEnabled,
+                templateUrl: 'views/payementDetails.html',
+                controller: 'PaymentDetailController',
+                size: "sm",
+                resolve: {
+                    event: function () {
+                        return event;
+                    },
+                    program: function () {
+                        return $scope.program;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (resultItem) {
+                iRoadModal.setRelations(event).then(function () {
+
+                });
+            }, function () {
+                iRoadModal.setRelations(event).then(function () {
+
+                });
+                $log.info('Modal dismissed at: ' + new Date());
+            });
+        };
         $scope.ok = function () {
             $uibModalInstance.close({});
         };
