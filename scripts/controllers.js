@@ -10,29 +10,6 @@ var appControllers = angular.module('appControllers', ['iroad-relation-modal'])
 
         $scope.pager = {pageSize: 10};
         $scope.programName = "Offence Event";
-        function createColumns(programStageDataElements) {
-            var cols = []
-            if (programStageDataElements) {
-                programStageDataElements.forEach(function (programStageDataElement) {
-                    var filter = {};
-                    filter[programStageDataElement.dataElement.name.replace(" ", "")] = 'text';
-                    cols.push({
-                        field: programStageDataElement.dataElement.name.replace(" ", ""),
-                        title: programStageDataElement.dataElement.name,
-                        headerTitle: programStageDataElement.dataElement.name,
-                        show: programStageDataElement.displayInReports,
-                        filter: filter
-                    });
-                })
-            }
-            cols.push({
-                field: "",
-                title: "Action",
-                headerTitle: "Action",
-                show: true
-            });
-            return cols;
-        }
 
         $scope.getOffences = function () {
             $scope.loading = true;
@@ -44,7 +21,7 @@ var appControllers = angular.module('appControllers', ['iroad-relation-modal'])
                         $scope.program = program;
                         return iRoadModal.getRelatedPrograms($scope.programName).then(function (programs) {
                             $scope.programs = programs;
-                            $scope.tableCols = createColumns(program.programStages[0].programStageDataElements);
+                            $scope.tableCols = iRoadModal.createColumns(program.programStages[0].programStageDataElements);
                             return iRoadModal.getAll($scope.programName, $scope.pager).then(function (results) {
                                 $scope.pager = results.pager;
                                 params.page($scope.pager.page)
